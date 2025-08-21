@@ -1,9 +1,15 @@
 import BaseCurrencyPicker from "@/components/BaseCurrencyPicker";
+import PresetAmountButtons from "@/components/PresetAmountButtons";
 import TargetCurrencyPicker from "@/components/TargetCurrencyPicker";
-import PresetAmountButtons from "@/components/presetAmountButtons";
-import { exchangeRateApi, setAmount } from "@/redux/conversionSlice";
+import {
+  exchangeRateApi,
+  setAmount,
+  setBaseCurrency,
+  setTargetCurrency,
+} from "@/redux/conversionSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getBaseFlag, getTargetFlag } from "@/utils/findFlag";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
@@ -12,6 +18,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -26,6 +33,7 @@ export default function Index() {
     convertedValue,
     targetCode,
     baseCode,
+    conversionRate,
   } = useSelector((state: RootState) => state.conversion);
 
   const [targetFlagURI, setTargetFlagURI] = useState<string | undefined>(
@@ -72,6 +80,8 @@ export default function Index() {
         }}
         className="flex gap-6"
       >
+        <Text className="font-bold text-4xl mb-10">Currency Exchange</Text>
+        {/* CURRENCY SELECTORS */}
         <View className="flex flex-row gap-3">
           <View className="flex flex-col">
             <Text>From</Text>
@@ -83,6 +93,7 @@ export default function Index() {
           </View>
         </View>
 
+        {/* QUANTITY INPUT */}
         <View className="flex flex-row justify-center items-center border-2 border-slate-200 rounded-lg">
           <TextInput
             style={styles.input}
@@ -93,10 +104,29 @@ export default function Index() {
             keyboardType="numeric"
             className=" w-4/6 h-14 font-black text-lg"
           />
+          <TouchableOpacity
+            className="border border-stone-400 rounded-full p-1 mr-3"
+            onPress={() => {
+              dispatch(setBaseCurrency(targetCurrency));
+              dispatch(setTargetCurrency(baseCurrency));
+            }}
+          >
+            <Ionicons name="swap-horizontal" size={20} color="black" />
+          </TouchableOpacity>
         </View>
 
         <PresetAmountButtons />
 
+        {/* CONVERSION RATE */}
+        {amount && baseCurrency && targetCurrency ? (
+          <Text className="font-semibold text-lg">
+            1 {baseCurrency} = {conversionRate} {targetCurrency}
+          </Text>
+        ) : (
+          <></>
+        )}
+
+        {/* CONVERTED VALUE */}
         <View className="flex flex-row gap-2 justify-center">
           <Text className="font-bold text-4xl">{convertedValue}</Text>
           <Text className="font-bold text-3xl">{targetCode}</Text>

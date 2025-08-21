@@ -8,6 +8,7 @@ interface ConverterState {
   convertedValue: string;
   targetCode: string;
   baseCode: string;
+  conversionRate: string;
 }
 
 const initialState: ConverterState = {
@@ -17,6 +18,7 @@ const initialState: ConverterState = {
   convertedValue: "",
   targetCode: "",
   baseCode: "",
+  conversionRate: "",
 };
 
 export const exchangeRateApi = createAsyncThunk(
@@ -62,6 +64,7 @@ export const conversionSlice = createSlice({
       state.convertedValue = action.payload.conversion_result.toFixed(2);
       state.targetCode = action.payload.target_code;
       state.baseCode = action.payload.base_code;
+      state.conversionRate = action.payload.conversion_rate;
     });
   },
 });
