@@ -1,4 +1,5 @@
 import BaseCurrencyPicker from "@/components/BaseCurrencyPicker";
+import CalculatorPad from "@/components/CalculatorPad";
 import PresetAmountButtons from "@/components/PresetAmountButtons";
 import TargetCurrencyPicker from "@/components/TargetCurrencyPicker";
 import {
@@ -116,6 +117,8 @@ export default function Index() {
         </View>
 
         <PresetAmountButtons />
+
+        <CalculatorPad />
 
         {/* CONVERSION RATE */}
         {amount && baseCurrency && targetCurrency ? (
