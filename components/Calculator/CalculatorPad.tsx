@@ -1,55 +1,65 @@
+import { setAmount } from '@/redux/conversionSlice';
+import { AppDispatch, RootState } from '@/redux/store';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 import CalculatorButton from './CalculatorButton';
 import CalculatorRow from './CalculatorRow';
 
 const CalculatorPad = () => {
-    const [currentValue, setCurrentValue] = useState("0")
+    const dispatch = useDispatch<AppDispatch>()
     const [operator, setOperator] = useState<string | null>(null)
     const [previousValue, setPreviousValue] = useState<string | null>(null)
+    const { amount } = useSelector((state: RootState) => state.conversion)
 
     const handleTap = (type: string, value?: string | number) => {
-switch (type) {
+    switch (type) {
+
     case "number": 
-    if (value === "." && currentValue.includes(".")) {
+      if (value === "." && amount.includes(".")) {
         return;
-    }
-    setCurrentValue(prev => prev === "0" ? String(value) : prev + String(value));
-    break;
+      }
+      dispatch(setAmount(amount === "0" ? String(value) : amount + String(value)));
+      break;
 
     case "operator":
         setOperator(String(value))
-        setPreviousValue(currentValue)
-        setCurrentValue("0")
+        setPreviousValue(amount)
+        dispatch(setAmount("0"))
         break;
 
     case "equal":
         if (!operator || !previousValue) return;
-         const result = eval(`${previousValue}${operator}${currentValue}`)
-         setCurrentValue(String(result))
+         const result = eval(`${previousValue}${operator}${amount}`)
+         dispatch(setAmount(String(result)))
          setOperator(null)
          setPreviousValue(null)
          break;
 
          case "clear":
-            setCurrentValue("0")
+            dispatch(setAmount("0"))
             setOperator(null)
             setPreviousValue(null)
             break;
         case "percentage":
-            setCurrentValue(String(parseFloat(currentValue) / 100))
+            dispatch(setAmount(String(parseFloat(amount) / 100)))
             break;
 }
     }
 
     return (
         <View className='border border-emerald-400 bg-pink-500 w-3/4'>
-          {/* <StatusBar barStyle="light-content" /> */}
           <SafeAreaView>
-            <Text style={styles.value}>
-              {parseFloat(currentValue).toLocaleString()}
-            </Text>
+            <TextInput
+            style={styles.input}
+            value={amount}
+            onChangeText={(amount) => dispatch(setAmount(amount))}
+            placeholder="0"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="numeric"
+            className=" w-4/6 h-14 font-black text-lg"
+          /> 
             <CalculatorRow>
               <CalculatorButton
                 text="C"
@@ -132,7 +142,12 @@ const styles = StyleSheet.create({
       textAlign: "right",
       marginRight: 20,
       marginBottom: 10
-    }
+    },
+    input: {
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 18,
+      },
   });
 
 export default CalculatorPad

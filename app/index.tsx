@@ -1,27 +1,19 @@
-import BaseCurrencyPicker from "@/components/BaseCurrencyPicker";
-import CalculatorPad from "@/components/CalculatorPad";
-import PresetAmountButtons from "@/components/PresetAmountButtons";
-import TargetCurrencyPicker from "@/components/TargetCurrencyPicker";
+import BaseCurrencyButton from "@/components/BaseCurrencyButton";
+import CalculatorPad from "@/components/Calculator/CalculatorPad";
+import TargetCurrencyButton from "@/components/TargetCurrencyButton";
 import {
-  exchangeRateApi,
-  setAmount,
-  setBaseCurrency,
-  setTargetCurrency,
+  exchangeRateApi
 } from "@/redux/conversionSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { getBaseFlag, getTargetFlag } from "@/utils/findFlag";
-import { Ionicons } from "@expo/vector-icons";
+import { getBaseCountryCode, getTargetCountryCode } from "@/utils/findFlag";
 import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -37,10 +29,8 @@ export default function Index() {
     conversionRate,
   } = useSelector((state: RootState) => state.conversion);
 
-  const [targetFlagURI, setTargetFlagURI] = useState<string | undefined>(
-    undefined
-  );
-  const [baseFlagURI, setBaseFlagURI] = useState<string | undefined>(undefined);
+  const [targetCountryCode, setTargetCountryCode] = useState<string | undefined>("")
+  const [baseCountryCode, setBaseCountryCode] = useState<string | undefined>("")
 
   const timeoutRef = useRef<number | null>(null);
 
@@ -64,8 +54,8 @@ export default function Index() {
 
   useEffect(() => {
     if (targetCode) {
-      setTargetFlagURI(getTargetFlag(targetCode));
-      setBaseFlagURI(getBaseFlag(baseCode));
+      setTargetCountryCode(getTargetCountryCode(targetCode))
+      setBaseCountryCode(getBaseCountryCode(baseCode))
     }
   }, [targetCode, baseCode]);
 
@@ -81,31 +71,25 @@ export default function Index() {
         }}
         className="flex gap-6"
       >
-        <Text className="font-bold text-4xl mb-10">Currency Exchange</Text>
+    
         {/* CURRENCY SELECTORS */}
         <View className="flex flex-row gap-3">
           <View className="flex flex-col">
             <Text>From</Text>
-            <BaseCurrencyPicker baseFlagURI={baseFlagURI} />
+            <BaseCurrencyButton baseCountryCode={baseCountryCode} />
+
           </View>
           <View className="flex flex-col">
             <Text>To</Text>
-            <TargetCurrencyPicker targetFlagURI={targetFlagURI} />
+            <TargetCurrencyButton targetCountryCode={targetCountryCode} />
+          
           </View>
         </View>
 
         {/* QUANTITY INPUT */}
         <View className="flex flex-row justify-center items-center border-2 border-slate-200 rounded-lg">
-          <TextInput
-            style={styles.input}
-            value={amount}
-            onChangeText={(amount) => dispatch(setAmount(amount))}
-            placeholder="0"
-            placeholderTextColor="#9CA3AF"
-            keyboardType="numeric"
-            className=" w-4/6 h-14 font-black text-lg"
-          />
-          <TouchableOpacity
+     
+          {/* <TouchableOpacity
             className="border border-stone-400 rounded-full p-1 mr-3"
             onPress={() => {
               dispatch(setBaseCurrency(targetCurrency));
@@ -113,10 +97,10 @@ export default function Index() {
             }}
           >
             <Ionicons name="swap-horizontal" size={20} color="black" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
-        <PresetAmountButtons />
+        {/* <PresetAmountButtons /> */}
 
         <CalculatorPad />
 
@@ -139,10 +123,3 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
-  input: {
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 18,
-  },
-});
