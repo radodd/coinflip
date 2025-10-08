@@ -4,7 +4,7 @@ import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-interface CurrencyItem {
+interface CurrencyItemProps {
     code: string;
     name: string;
     country: string;
@@ -14,7 +14,7 @@ interface CurrencyItem {
     router?: any;
 }
 
-const CurrencyItem = ({ countryCode, name, code, type, router }: CurrencyItem) => {
+const CurrencyItem = ({ countryCode, name, code, type, router }: CurrencyItemProps) => {
 const dispatch = useDispatch()
 
     const handlePress = () => {
